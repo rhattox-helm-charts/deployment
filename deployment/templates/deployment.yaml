@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .name }}"
+  name: "{{ .name }}-deployment"
   labels:
     app: "{{ .name }}"
 spec:
@@ -16,11 +16,69 @@ spec:
       labels:
         app: "{{ .name }}"
     spec:
-      containers:
-        - name: "{{ .name }}"
+
+      #
+      # InitContainers
+      #
+      {{- with .initContainers  }}
+      {{- if .enabled }}
+      initContainers:
+      {{- range .configs }}
+        - name: {{ .name }}
           image: "{{ .image.repository }}:{{ .image.tag }}"
           imagePullPolicy: {{ .image.pullPolicy }}
 
-{{- end }}
+          {{- with .volumeMounts  }}
+          {{- if .enabled }}
+          volumeMounts:
+            {{- range .configs }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+          {{- end }}
+          {{- end }}
 
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+      #
+      # Containers
+      #
+      {{- with .containers  }}
+      {{- if .enabled }}
+      containers:
+        {{ range .configs }}
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+
+          {{- with .volumeMounts  }}
+          {{- if .enabled }}
+          volumeMounts:
+            {{- range .configs }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+          {{- end }}
+          {{- end }}
+
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+      #
+      # Volumes
+      #
+      {{- with .volumes  }}
+      {{- if .enabled }}
+      volumes:
+        {{ range .configs }}
+          - {{ . }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+{{- end }}
 {{- end }}

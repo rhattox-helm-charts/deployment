@@ -1,10 +1,71 @@
 deployment:
-  enabled: true
+  enabled: false
   name: "example"
 
   replicas: 1
 
-  image:
-    repository: "nginx"
-    tag: "1.21.6"
-    pullPolicy: IfNotPresent
+  initContainers:
+    enabled: false
+    configs:
+      - name: nginx-example
+        image:
+          repository: "nginx"
+          tag: "1.21.6"
+          pullPolicy: IfNotPresent
+        volumeMounts:
+          enabled: false
+          configs:
+            - name: data-volume
+              mountPath: /data
+
+  containers:
+    enabled: false
+    configs:
+      - name: nginx-example
+        image:
+          repository: "nginx"
+          tag: "1.21.6"
+          pullPolicy: IfNotPresent
+
+        volumeMounts:
+          enabled: false
+          configs:
+            - name: data-volume
+              mountPath: /data
+
+        ports:
+          - containerPort: 80
+
+        envFrom:
+          - configMapRef:
+              name: example-config
+          - secretRef:
+              name: example-secret
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 5
+
+  volumes:
+    enabled: false
+    configs:
+      - name: example-data-volume
+        emptyDir: {}
