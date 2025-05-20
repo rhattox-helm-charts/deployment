@@ -1,5 +1,5 @@
 deployment:
-  enabled: false
+  enabled: true
   name: "example"
 
   replicas: 1
@@ -19,7 +19,7 @@ deployment:
               mountPath: /data
 
   containers:
-    enabled: false
+    enabled: true
     configs:
       - name: nginx-example
         image:
@@ -34,21 +34,27 @@ deployment:
               mountPath: /data
 
         ports:
-          - containerPort: 80
+          enabled: false
+          configs:
+            - containerPort: 80
 
         envFrom:
-          - configMapRef:
-              name: example-config
-          - secretRef:
-              name: example-secret
+          enabled: false
+          configs:
+            - configMapRef:
+                name: example-config
+            - secretRef:
+                name: example-secret
 
         resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "500m"
-            memory: "256Mi"
+          enabled: true
+          configs:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
 
         livenessProbe:
           httpGet:

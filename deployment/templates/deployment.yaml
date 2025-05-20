@@ -63,6 +63,45 @@ spec:
           {{- end }}
           {{- end }}
 
+          #
+          # Ports
+          #
+          {{- with .ports  }}
+          {{- if .enabled }}
+          ports:
+            {{ range .configs }}
+              - {{ . }}
+            {{- end }}
+          {{- end }}
+          {{- end }}
+
+          #
+          # envFrom
+          #
+          {{- with .envFrom  }}
+          {{- if .enabled }}
+          envFrom:
+            {{ range .configs }}
+              - {{ . }}
+            {{- end }}
+          {{- end }}
+          {{- end }}
+
+          #
+          # Resources
+          #
+          {{- with .resources  }}
+          {{- if .enabled }}
+          resources:
+            requests:
+              cpu: {{ .configs.requests.cpu }}
+              memory: {{ .configs.requests.memory }}
+            limits:
+              cpu: {{ .configs.limits.cpu }}
+              memory: {{ .configs.limits.memory }}
+          {{- end }}
+          {{- end }}
+
       {{- end }}
       {{- end }}
       {{- end }}
@@ -79,6 +118,25 @@ spec:
       {{- end }}
       {{- end }}
 
+      #
+      # Probes
+      #
+      {{- with .livenessProbe  }}
+      livenessProbe:
+        httpGet:
+          path: {{ .httpGet.path }}
+          port: {{ .httpGet.port }}
+        initialDelaySeconds: {{ .initialDelaySeconds }}
+        periodSeconds: {{ .periodSeconds }}
+      {{- end }}
 
+      {{- with .readinessProbe  }}
+      readinessProbe:
+        httpGet:
+          path: {{ .httpGet.path }}
+          port: {{ .httpGet.port }}
+        initialDelaySeconds: {{ .initialDelaySeconds }}
+        periodSeconds: {{ .periodSeconds }}
+      {{- end }}
 {{- end }}
 {{- end }}
