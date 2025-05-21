@@ -42,11 +42,15 @@ spec:
               mountPath: {{ .mountPath }}
             {{- end }}
           {{- end }}
+          {{- with .service  }}
+          {{- range .  }}
           {{- with .ports  }}
           ports:
             {{- range . }}
               - containerPort: {{ .containerPort }}
             {{- end }}
+          {{- end }}
+          {{- end }}
           {{- end }}
           {{- with .env  }}
           env:
@@ -85,9 +89,9 @@ spec:
               mountPath: {{ .mountPath }}
             {{- end }}
           {{- end }}
-          {{- with .ports  }}
+          {{- with .service  }}
           ports:
-            {{- range . }}
+            {{- range .ports }}
               - containerPort: {{ .containerPort }}
             {{- end }}
           {{- end }}

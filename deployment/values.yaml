@@ -28,9 +28,23 @@ deployment:
           - name: data-volume
             mountPath: /data
 
-        ports:
-          - containerPort: 80
-          - containerPort: 8080
+        service:
+          - name: http-80
+            type: ClusterIP
+            ports:
+              - servicePort: 80
+                containerPort: 80
+                protocol: TCP
+              - servicePort: 9090
+                containerPort: 5000
+                protocol: TCP
+          - name: http-8080
+            type: NodePort
+            ports:
+              - servicePort: 8080
+                containerPort: 3000
+                nodePort: 58080
+                protocol: TCP
 
         env:
           - name: test
