@@ -74,37 +74,32 @@ spec:
             allowPrivilegeEscalation: {{ .securityContext.allowPrivilegeEscalation }}
 
           {{- with .volumeMounts  }}
-          {{- if .enabled }}
           volumeMounts:
-            {{- range .configs }}
+            {{- range . }}
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
-          {{- end }}
           {{- end }}
 
           #
           # Ports
           #
           {{- with .ports  }}
-          {{- if .enabled }}
           ports:
-            {{ range .configs }}
-              - {{ . }}
+            {{- range . }}
+              - containerPort: {{ .containerPort }}
             {{- end }}
-          {{- end }}
           {{- end }}
 
           #
           # env
           #
           {{- with .env  }}
-          {{- if .enabled }}
           env:
-            {{ range .configs }}
-              - {{ . }}
+            {{- range . }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
             {{- end }}
-          {{- end }}
           {{- end }}
 
 
@@ -112,27 +107,21 @@ spec:
           # envFrom
           #
           {{- with .envFrom  }}
-          {{- if .enabled }}
           envFrom:
-            {{ range .configs }}
-              - {{ . }}
-            {{- end }}
-          {{- end }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
 
           #
           # Resources
           #
           {{- with .resources  }}
-          {{- if .enabled }}
           resources:
             requests:
-              cpu: {{ .configs.requests.cpu }}
-              memory: {{ .configs.requests.memory }}
+              cpu: {{ .requests.cpu }}
+              memory: {{ .requests.memory }}
             limits:
-              cpu: {{ .configs.limits.cpu }}
-              memory: {{ .configs.limits.memory }}
-          {{- end }}
+              cpu: {{ .limits.cpu }}
+              memory: {{ .limits.memory }}
           {{- end }}
           #
           # Probes

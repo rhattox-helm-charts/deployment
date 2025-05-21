@@ -26,13 +26,11 @@ deployment:
           tag: "1.21.6"
           pullPolicy: IfNotPresent
         volumeMounts:
-          enabled: false
-          configs:
-            - name: data-volume
-              mountPath: /data
+          - name: data-volume
+            mountPath: /data
 
   containers:
-    enabled: false
+    enabled: true
     configs:
       - name: nginx-example
 
@@ -45,39 +43,30 @@ deployment:
           pullPolicy: IfNotPresent
 
         volumeMounts:
-          enabled: false
-          configs:
-            - name: data-volume
-              mountPath: /data
+          - name: data-volume
+            mountPath: /data
 
         ports:
-          enabled: false
-          configs:
-            - containerPort: 80
+          - containerPort: 80
+          - containerPort: 8080
 
         env:
-          enabled: false
-          configs:
-            - name: LOG_LEVEL
-              value: "debug"
+          - name: test
+            value: test
 
         envFrom:
-          enabled: false
-          configs:
-            - configMapRef:
-                name: example-config
-            - secretRef:
-                name: example-secret
+          - configMapRef:
+              name: example-config
+          - secretRef:
+              name: example-secret
 
         resources:
-          enabled: false
-          configs:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
 
         livenessProbe:
           httpGet:
