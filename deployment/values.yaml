@@ -1,5 +1,4 @@
 deployment:
-  enabled: true
   name: "example"
 
   replicas: 1
@@ -18,19 +17,40 @@ deployment:
     runAsUser: 1000
 
   initContainers:
-    enabled: false
     configs:
-      - name: nginx-example
+      - name: nginx-init-example
         image:
           repository: "nginx"
           tag: "1.21.6"
           pullPolicy: IfNotPresent
+
         volumeMounts:
           - name: data-volume
             mountPath: /data
 
+        ports:
+          - containerPort: 80
+          - containerPort: 8080
+
+        env:
+          - name: test
+            value: test
+
+        envFrom:
+          - configMapRef:
+              name: example-config
+          - secretRef:
+              name: example-secret
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+
   containers:
-    enabled: true
     configs:
       - name: nginx-example
 
@@ -83,7 +103,5 @@ deployment:
           periodSeconds: 5
 
   volumes:
-    enabled: false
-    configs:
-      - name: example-data-volume
-        emptyDir: {}
+    - name: example-data-volume
+      emptyDir: {}

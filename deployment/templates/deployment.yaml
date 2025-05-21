@@ -1,5 +1,4 @@
 {{- with .Values.deployment }}
-{{- if .enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,54 +24,17 @@ spec:
       labels:
         app: "{{ .name }}"
     spec:
-      #
-      # Security Context
-      #
       {{- with .securityContext  }}
       securityContext:
         runAsNonRoot: {{ .runAsNonRoot }}
         runAsUser: {{ .runAsUser }}
       {{- end }}
-
-      #
-      # InitContainers
-      #
       {{- with .initContainers  }}
-      {{- if .enabled }}
       initContainers:
       {{- range .configs }}
         - name: {{ .name }}
           image: "{{ .image.repository }}:{{ .image.tag }}"
           imagePullPolicy: {{ .image.pullPolicy }}
-
-          {{- with .volumeMounts  }}
-          {{- if .enabled }}
-          volumeMounts:
-            {{- range .configs }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-            {{- end }}
-          {{- end }}
-          {{- end }}
-
-      {{- end }}
-      {{- end }}
-      {{- end }}
-
-      #
-      # Containers
-      #
-      {{- with .containers  }}
-      {{- if .enabled }}
-      containers:
-        {{ range .configs }}
-        - name: {{ .name }}
-          image: "{{ .image.repository }}:{{ .image.tag }}"
-          imagePullPolicy: {{ .image.pullPolicy }}
-          
-          securityContext:
-            allowPrivilegeEscalation: {{ .securityContext.allowPrivilegeEscalation }}
-
           {{- with .volumeMounts  }}
           volumeMounts:
             {{- range . }}
@@ -80,20 +42,12 @@ spec:
               mountPath: {{ .mountPath }}
             {{- end }}
           {{- end }}
-
-          #
-          # Ports
-          #
           {{- with .ports  }}
           ports:
             {{- range . }}
               - containerPort: {{ .containerPort }}
             {{- end }}
           {{- end }}
-
-          #
-          # env
-          #
           {{- with .env  }}
           env:
             {{- range . }}
@@ -101,19 +55,10 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
           {{- end }}
-
-
-          #
-          # envFrom
-          #
           {{- with .envFrom  }}
           envFrom:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
-          #
-          # Resources
-          #
           {{- with .resources  }}
           resources:
             requests:
@@ -123,9 +68,49 @@ spec:
               cpu: {{ .limits.cpu }}
               memory: {{ .limits.memory }}
           {{- end }}
-          #
-          # Probes
-          #
+      {{- end }}
+      {{- end }}
+      {{- with .containers  }}
+      containers:
+        {{ range .configs }}
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: {{ .securityContext.allowPrivilegeEscalation }}
+          {{- with .volumeMounts  }}
+          volumeMounts:
+            {{- range . }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+          {{- end }}
+          {{- with .ports  }}
+          ports:
+            {{- range . }}
+              - containerPort: {{ .containerPort }}
+            {{- end }}
+          {{- end }}
+          {{- with .env  }}
+          env:
+            {{- range . }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
+          {{- end }}
+          {{- with .envFrom  }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .resources  }}
+          resources:
+            requests:
+              cpu: {{ .requests.cpu }}
+              memory: {{ .requests.memory }}
+            limits:
+              cpu: {{ .limits.cpu }}
+              memory: {{ .limits.memory }}
+          {{- end }}
           {{- with .livenessProbe  }}
           livenessProbe:
             httpGet:
@@ -134,7 +119,6 @@ spec:
             initialDelaySeconds: {{ .initialDelaySeconds }}
             periodSeconds: {{ .periodSeconds }}
           {{- end }}
-
           {{- with .readinessProbe  }}
           readinessProbe:
             httpGet:
@@ -143,23 +127,10 @@ spec:
             initialDelaySeconds: {{ .initialDelaySeconds }}
             periodSeconds: {{ .periodSeconds }}
           {{- end }}
-
       {{- end }}
       {{- end }}
-      {{- end }}
-
-      #
-      # Volumes
-      #
       {{- with .volumes  }}
-      {{- if .enabled }}
       volumes:
-        {{ range .configs }}
-          - {{ . }}
-        {{- end }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- end }}
-
-
-{{- end }}
 {{- end }}
