@@ -40,7 +40,7 @@ spec:
   replicas: 1
   template:
     spec:
-      repository: rhattox-helm-charts/helm-chart-deployment
+      repository: rhattox-helm-charts/deployment
       # https://github.com/actions/actions-runner-controller/blob/master/docs/deploying-alternative-runners.md
       image: summerwind/actions-runner-dind
       dockerdWithinRunnerContainer: true
