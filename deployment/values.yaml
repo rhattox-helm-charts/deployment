@@ -8,7 +8,14 @@ deployment:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-      maxSurge: 1      
+      maxSurge: 1
+
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 5
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
 
   initContainers:
     enabled: false
@@ -25,9 +32,13 @@ deployment:
               mountPath: /data
 
   containers:
-    enabled: true
+    enabled: false
     configs:
       - name: nginx-example
+
+        securityContext:
+          allowPrivilegeEscalation: false
+
         image:
           repository: "nginx"
           tag: "1.21.6"
@@ -44,6 +55,12 @@ deployment:
           configs:
             - containerPort: 80
 
+        env:
+          enabled: false
+          configs:
+            - name: LOG_LEVEL
+              value: "debug"
+
         envFrom:
           enabled: false
           configs:
@@ -53,7 +70,7 @@ deployment:
                 name: example-secret
 
         resources:
-          enabled: true
+          enabled: false
           configs:
             requests:
               cpu: "100m"
