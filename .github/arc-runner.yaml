@@ -32,7 +32,7 @@ metadata:
     name: actions-runner
 ---
 apiVersion: actions.summerwind.dev/v1alpha1
-kind: Runnerhelm-chart-deployment
+kind: RunnerDeployment
 metadata:
   name: helm-chart-deployment
   namespace: actions-runner
