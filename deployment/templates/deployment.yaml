@@ -7,6 +7,13 @@ metadata:
   labels:
     app: "{{ .name }}"
 spec:
+  {{- with .strategy }}
+  strategy:
+    type: {{ .type }}
+    rollingUpdate:
+      maxUnavailable: {{ .rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .rollingUpdate.maxSurge }}    
+  {{- end}}
   replicas: {{ .replicas }}
   selector:
     matchLabels:
@@ -101,6 +108,26 @@ spec:
               memory: {{ .configs.limits.memory }}
           {{- end }}
           {{- end }}
+          #
+          # Probes
+          #
+          {{- with .livenessProbe  }}
+          livenessProbe:
+            httpGet:
+              path: {{ .httpGet.path }}
+              port: {{ .httpGet.port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+          {{- end }}
+
+          {{- with .readinessProbe  }}
+          readinessProbe:
+            httpGet:
+              path: {{ .httpGet.path }}
+              port: {{ .httpGet.port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+          {{- end }}
 
       {{- end }}
       {{- end }}
@@ -118,25 +145,6 @@ spec:
       {{- end }}
       {{- end }}
 
-      #
-      # Probes
-      #
-      {{- with .livenessProbe  }}
-      livenessProbe:
-        httpGet:
-          path: {{ .httpGet.path }}
-          port: {{ .httpGet.port }}
-        initialDelaySeconds: {{ .initialDelaySeconds }}
-        periodSeconds: {{ .periodSeconds }}
-      {{- end }}
 
-      {{- with .readinessProbe  }}
-      readinessProbe:
-        httpGet:
-          path: {{ .httpGet.path }}
-          port: {{ .httpGet.port }}
-        initialDelaySeconds: {{ .initialDelaySeconds }}
-        periodSeconds: {{ .periodSeconds }}
-      {{- end }}
 {{- end }}
 {{- end }}
