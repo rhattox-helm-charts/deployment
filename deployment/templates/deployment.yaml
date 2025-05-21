@@ -43,9 +43,9 @@ spec:
             {{- end }}
           {{- end }}
           {{- with .service  }}
+          ports:
           {{- range .  }}
           {{- with .ports  }}
-          ports:
             {{- range . }}
               - containerPort: {{ .containerPort }}
             {{- end }}
@@ -91,9 +91,13 @@ spec:
           {{- end }}
           {{- with .service  }}
           ports:
-            {{- range .ports }}
+          {{- range .  }}
+          {{- with .ports  }}
+            {{- range . }}
               - containerPort: {{ .containerPort }}
             {{- end }}
+          {{- end }}
+          {{- end }}
           {{- end }}
           {{- with .env  }}
           env:
