@@ -1,144 +1,17 @@
-{{- with .Values.deployment }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .name }}-deployment"
-  labels:
-    app: "{{ .name }}"
+  name: {{ include "my-app.fullname" . }}
 spec:
-  {{- with .strategy }}
-  strategy:
-    type: {{ .type }}
-    rollingUpdate:
-      maxUnavailable: {{ .rollingUpdate.maxUnavailable }}
-      maxSurge: {{ .rollingUpdate.maxSurge }}    
-  {{- end}}
-  progressDeadlineSeconds: {{ .progressDeadlineSeconds }}
-  revisionHistoryLimit: {{ .revisionHistoryLimit }}
-  replicas: {{ .replicas }}
+  replicas: {{  required "Number of replicas required!" .Values.replicaCount | int  }}
   selector:
     matchLabels:
-      app: "{{ .name }}"
-  template:    
+{{ include "my-app.labels" . | indent 6 }}
+  template:
     metadata:
       labels:
-        app: "{{ .name }}"
+{{ include "my-app.labels" . | indent 8 }}
     spec:
-      {{- with .securityContext  }}
-      securityContext:
-        runAsNonRoot: {{ .runAsNonRoot }}
-        runAsUser: {{ .runAsUser }}
-      {{- end }}
-      {{- with .initContainers  }}
-      initContainers:
-      {{- range .configs }}
-        - name: {{ .name }}
-          image: "{{ .image.repository }}:{{ .image.tag }}"
-          imagePullPolicy: {{ .image.pullPolicy }}
-          {{- with .volumeMounts  }}
-          volumeMounts:
-            {{- range . }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-            {{- end }}
-          {{- end }}
-          {{- with .service  }}
-          ports:
-          {{- range .  }}
-          {{- with .ports  }}
-            {{- range . }}
-              - containerPort: {{ .containerPort }}
-            {{- end }}
-          {{- end }}
-          {{- end }}
-          {{- end }}
-          {{- with .env  }}
-          env:
-            {{- range . }}
-            - name: {{ .name | quote }}
-              value: {{ .value | quote }}
-            {{- end }}
-          {{- end }}
-          {{- with .envFrom  }}
-          envFrom:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .resources  }}
-          resources:
-            requests:
-              cpu: {{ .requests.cpu }}
-              memory: {{ .requests.memory }}
-            limits:
-              cpu: {{ .limits.cpu }}
-              memory: {{ .limits.memory }}
-          {{- end }}
-      {{- end }}
-      {{- end }}
-      {{- with .containers  }}
       containers:
-        {{ range .configs }}
-        - name: {{ .name }}
-          image: "{{ .image.repository }}:{{ .image.tag }}"
-          imagePullPolicy: {{ .image.pullPolicy }}
-          securityContext:
-            allowPrivilegeEscalation: {{ .securityContext.allowPrivilegeEscalation }}
-          {{- with .volumeMounts  }}
-          volumeMounts:
-            {{- range . }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-            {{- end }}
-          {{- end }}
-          {{- with .service  }}
-          ports:
-          {{- range .  }}
-          {{- with .ports  }}
-            {{- range . }}
-              - containerPort: {{ .containerPort }}
-            {{- end }}
-          {{- end }}
-          {{- end }}
-          {{- end }}
-          {{- with .env  }}
-          env:
-            {{- range . }}
-            - name: {{ .name | quote }}
-              value: {{ .value | quote }}
-            {{- end }}
-          {{- end }}
-          {{- with .envFrom  }}
-          envFrom:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .resources  }}
-          resources:
-            requests:
-              cpu: {{ .requests.cpu }}
-              memory: {{ .requests.memory }}
-            limits:
-              cpu: {{ .limits.cpu }}
-              memory: {{ .limits.memory }}
-          {{- end }}
-          {{- with .livenessProbe  }}
-          livenessProbe:
-            httpGet:
-              path: {{ .httpGet.path }}
-              port: {{ .httpGet.port }}
-            initialDelaySeconds: {{ .initialDelaySeconds }}
-            periodSeconds: {{ .periodSeconds }}
-          {{- end }}
-          {{- with .readinessProbe  }}
-          readinessProbe:
-            httpGet:
-              path: {{ .httpGet.path }}
-              port: {{ .httpGet.port }}
-            initialDelaySeconds: {{ .initialDelaySeconds }}
-            periodSeconds: {{ .periodSeconds }}
-          {{- end }}
-      {{- end }}
-      {{- end }}
-      {{- with .volumes  }}
-      volumes:
-      {{- toYaml . | nindent 8 }}
-      {{- end }}
-{{- end }}
+        - name: nginx
+          image: nginx:1.14
