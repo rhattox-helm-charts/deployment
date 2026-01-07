@@ -1,13 +1,17 @@
 # values.yaml
 fullnameOverride: "default"
 nameOverride: "default"
+environment: dev
 
 replicaCount: "3"
 image:
   repository: "nginx"
   tag: "1.25"
 
-environment: dev
+annotations: { }
+#  prometheus.io/scrape: "true"
+#  prometheus.io/port: "8080"
+#  description: "Main production API for the billing module"
 
 resources:
   requests:
@@ -16,6 +20,22 @@ resources:
   limits:
     memory: "128Mi"
     cpu: "500m"
-env:
-  - name: "test"
-    value: "test"
+
+env: [ ]
+#  - name: "hello"
+#    value: "world"
+
+strategy: { }
+#  type: RollingUpdate
+#  rollingUpdate:
+#    maxSurge: 1
+#    maxUnavailable: 0
+
+volumeMounts: [ ]
+#  - name: storage-volume
+#    mountPath: /data/db
+
+volumes: [ ]
+#  - name: storage-volume
+#    persistentVolumeClaim:
+#      claimName: my-pvc-disk

@@ -24,5 +24,6 @@ Common labels: The "Full Identity"
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/env: {{ required "environment is required!!" .Values.environment | quote}}
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 {{- end }}

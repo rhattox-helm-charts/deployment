@@ -4,6 +4,9 @@ metadata:
   name: {{ include "my-app.fullname" . }}
 spec:
   replicas: {{  required "Number of replicas required!" .Values.replicaCount | int  }}
+  {{- if .Values.strategy }}
+  strategy: {{ .Values.strategy | toYaml | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
 {{ include "my-app.selectorLabels" . | indent 6 }}
@@ -11,20 +14,20 @@ spec:
     metadata:
       labels:
 {{ include "my-app.labels" . | indent 8 }}
+      {{- if .Values.annotations }}
+      annotations: {{ .Values.annotations | toYaml | nindent 8 }}
+      {{- end }}
     spec:
+      {{- if .Values.volumes }}
+      volumes: {{ .Values.volumes | toYaml | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ printf "%s-%s" ("container") (include "my-app.fullname" .) | quote}}
           image: {{ printf "%s:%s" (required "Image repository is required!" .Values.image.repository) (required "Image tag is required!" .Values.image.tag) | quote }}
-          resources:
-          {{- with .Values.resources }}
-            requests:
-              {{- with  .requests }}
-              memory: {{ .memory | quote }}
-              cpu: {{ .cpu | quote }}
-              {{- end }}
-            limits:
-              {{- with  .limits }}
-              memory: {{ .memory | quote }}
-              cpu: {{ .cpu | quote }}
-              {{- end }}
+          resources: {{ .Values.resources | toYaml | nindent 12 }}
+          {{- if .Values.env }}
+          env: {{ .Values.env | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.volumeMounts }}
+          volumeMounts: {{ .Values.volumeMounts | toYaml | nindent 12 }}
           {{- end }}
