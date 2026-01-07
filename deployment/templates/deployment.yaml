@@ -6,12 +6,25 @@ spec:
   replicas: {{  required "Number of replicas required!" .Values.replicaCount | int  }}
   selector:
     matchLabels:
-{{ include "my-app.labels" . | indent 6 }}
+{{ include "my-app.selectorLabels" . | indent 6 }}
   template:
     metadata:
       labels:
 {{ include "my-app.labels" . | indent 8 }}
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.14
+        - name: {{ printf "%s-%s" ("container") (include "my-app.fullname" .) | quote}}
+          image: {{ printf "%s:%s" (required "Image repository is required!" .Values.image.repository) (required "Image tag is required!" .Values.image.tag) | quote }}
+          resources:
+          {{- with .Values.resources }}
+            requests:
+              {{- with  .requests }}
+              memory: {{ .memory | quote }}
+              cpu: {{ .cpu | quote }}
+              {{- end }}
+            limits:
+              {{- with  .limits }}
+              memory: {{ .memory | quote }}
+              cpu: {{ .cpu | quote }}
+              {{- end }}
+          {{- end }}

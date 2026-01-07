@@ -7,22 +7,22 @@
 {{- end }}
 {{- end }}
 
+
 {{/*
 Selector labels: The "Search Filter"
 */}}
 {{- define "my-app.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "my-app.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: {{ include "my-app.fullname" . | quote }}
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end }}
 
 {{/*
 Common labels: The "Full Identity"
 */}}
 {{- define "my-app.labels" -}}
-helm.sh/chart: {{ include "my-app.chart" . }}
 {{ include "my-app.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 {{- end }}
