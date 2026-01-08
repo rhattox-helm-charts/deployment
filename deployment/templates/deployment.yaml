@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "my-app.fullname" . }}
+  name: {{ printf "%s-%s" ("deployment") (include "my-app.fullname" .) | quote}}
 spec:
   replicas: {{  required "Number of replicas required!" .Values.replicaCount | int  }}
   {{- if .Values.strategy }}
@@ -30,4 +30,10 @@ spec:
           {{- end }}
           {{- if .Values.volumeMounts }}
           volumeMounts: {{ .Values.volumeMounts | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
+          livenessProbe: {{ .Values.livenessProbe | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe: {{ .Values.readinessProbe | toYaml | nindent 12 }}
           {{- end }}

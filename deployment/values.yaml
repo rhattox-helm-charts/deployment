@@ -36,6 +36,22 @@ volumeMounts: [ ]
 #    mountPath: /data/db
 
 volumes: [ ]
-#  - name: storage-volume
-#    persistentVolumeClaim:
-#      claimName: my-pvc-disk
+  #  - name: storage-volume
+  #    persistentVolumeClaim:
+  #      claimName: my-pvc-disk
+
+
+# Health Checks
+livenessProbe: { }
+#  httpGet:
+#    path: /healthz
+#    port: 8080
+#  initialDelaySeconds: 15
+readinessProbe: { }
+#  httpGet:
+#    path: /ready
+#    port: 8080
+
+podDisruptionBudget:
+# maxUnavailable: 1
+ minAvailable: "80%"
