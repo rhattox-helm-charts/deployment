@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ printf "%s-%s" ("deployment") (include "my-app.fullname" .) | quote}}
+  name: {{ printf "deployment-%s" (include "my-app.fullname" $) | quote}}
 spec:
   replicas: {{  required "Number of replicas required!" .Values.replicaCount | int  }}
   {{- if .Values.strategy }}
@@ -22,9 +22,10 @@ spec:
       volumes: {{ .Values.volumes | toYaml | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ printf "%s-%s" ("container") (include "my-app.fullname" .) | quote}}
+        - name: {{ printf "container-%s" (include "my-app.fullname" .) | quote}}
           image: {{ printf "%s:%s" (required "Image repository is required!" .Values.image.repository) (required "Image tag is required!" .Values.image.tag) | quote }}
           resources: {{ .Values.resources | toYaml | nindent 12 }}
+          ports: {{ .Values.ports | toYaml | nindent 12 }}
           {{- if .Values.env }}
           env: {{ .Values.env | toYaml | nindent 12 }}
           {{- end }}
