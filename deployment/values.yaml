@@ -9,6 +9,7 @@ image:
   tag: "1.25"
 
 annotations: { }
+#annotations:
 #  prometheus.io/scrape: "true"
 #  prometheus.io/port: "8080"
 #  description: "Main production API for the billing module"
@@ -22,36 +23,55 @@ resources:
     cpu: "500m"
 
 env: [ ]
+#env:
 #  - name: "hello"
 #    value: "world"
 
 strategy: { }
+#strategy:
 #  type: RollingUpdate
 #  rollingUpdate:
 #    maxSurge: 1
 #    maxUnavailable: 0
 
 volumeMounts: [ ]
+#volumeMounts:
 #  - name: storage-volume
 #    mountPath: /data/db
 
 volumes: [ ]
-  #  - name: storage-volume
-  #    persistentVolumeClaim:
-  #      claimName: my-pvc-disk
+#volumes:
+#    - name: storage-volume
+#    persistentVolumeClaim:
+#      claimName: my-pvc-disk
 
 
 # Health Checks
 livenessProbe: { }
+#livenessProbe:
 #  httpGet:
 #    path: /healthz
 #    port: 8080
 #  initialDelaySeconds: 15
 readinessProbe: { }
+#readinessProbe:
 #  httpGet:
 #    path: /ready
 #    port: 8080
 
-podDisruptionBudget:
-# maxUnavailable: 1
- minAvailable: "80%"
+podDisruptionBudget: { }
+#podDisruptionBudget:
+#  maxUnavailable: 1
+#  minAvailable: "80%"
+
+horizontalPodAutoscaler: { }
+#horizontalPodAutoscaler:
+#  minReplicas: 2
+#  maxReplicas: 10
+#  metrics:
+#    - type: Resource
+#      resource:
+#        name: cpu
+#        target:
+#          type: Utilization
+#          averageUtilization: 70
