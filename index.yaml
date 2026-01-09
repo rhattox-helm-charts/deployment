@@ -13,6 +13,16 @@ entries:
     version: 0.1.0
   deployment:
   - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-01-09T01:33:37.693907976Z"
+    description: A Helm chart for Kubernetes
+    digest: dc143fa23ab1ec469a0365564dd6faeabb0d88236e347e8486a39b08101b1718
+    name: deployment
+    type: application
+    urls:
+    - https://github.com/rhattox-helm-charts/deployment/releases/download/deployment-0.1.0/deployment-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
     appVersion: 0.0.1
     created: "2026-01-09T01:24:30.582729486Z"
     description: A Helm chart for Kubernetes
@@ -22,4 +32,4 @@ entries:
     urls:
     - https://github.com/rhattox-helm-charts/deployment/releases/download/deployment-0.0.1/deployment-0.0.1.tgz
     version: 0.0.1
-generated: "2026-01-09T01:32:25.759980758Z"
+generated: "2026-01-09T01:33:37.693914498Z"
