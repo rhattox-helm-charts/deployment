@@ -3,6 +3,10 @@ on:
   push:
     tags:
       - "*"
+
+permissions:
+  contents: write
+  
 jobs:
   ci:
     uses: rhattox-shared-actions/shared-actions/.github/workflows/helm-deploy.yaml@main
