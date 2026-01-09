@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "deployment-%s" (include "my-app.fullname" $) | quote }}
+spec:
+  replicas: {{  required "Number of replicas required!" .Values.replicaCount | int  }}
+  {{- if .Values.strategy }}
+  strategy: {{ .Values.strategy | toYaml | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+{{ include "my-app.selectorLabels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "my-app.labels" . | indent 8 }}
+      {{- if .Values.annotations }}
+      annotations: {{ .Values.annotations | toYaml | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.volumes }}
+      volumes: {{ .Values.volumes | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ printf "container-%s" (include "my-app.fullname" .) | quote }}
+          image: {{ printf "%s:%s" (required "Image repository is required!" .Values.image.repository) (required "Image tag is required!" .Values.image.tag) | quote }}
+          resources: {{ .Values.resources | toYaml | nindent 12 }}
+          {{- if .Values.ports }}
+          ports: {{ .Values.ports | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.env }}
+          env: {{ .Values.env | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.volumeMounts }}
+          volumeMounts: {{ .Values.volumeMounts | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
+          livenessProbe: {{ .Values.livenessProbe | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe: {{ .Values.readinessProbe | toYaml | nindent 12 }}
+          {{- end }}

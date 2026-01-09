@@ -1,0 +1,16 @@
+{{- if .Values.service }}
+{{- range .Values.service }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "service-%s-%s" (.type) (include "my-app.fullname" $) | quote }}
+  labels:
+{{ include "my-app.labels" $ | indent 4 }}
+spec:
+  type: {{ .type }}
+  ports: {{ .ports | toYaml | nindent 4 }}
+  selector:
+{{ include "my-app.selectorLabels" $ | indent 4 }}
+{{- end }}
+{{- end }}
