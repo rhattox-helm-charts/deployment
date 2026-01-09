@@ -3,10 +3,15 @@ on:
   push:
     tags:
       - "*"
+
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v6
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
