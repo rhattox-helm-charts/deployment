@@ -1,7 +1,0 @@
-{{- if .Values.configMap }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ printf "configMap-%s" (include "my-app.fullname" $) | quote }}
-data: {{ toYaml .Values.configMap | nindent 2 }}
-{{- end }}
