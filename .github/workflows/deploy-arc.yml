@@ -1,0 +1,17 @@
+name: deploy-arc.yml
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          skip_packaging: true
+          charts_dir: ./deployment
+          pages_branch: main
+        env:
+          CR_TOKEN: "${{ secrets.GHA_TOKEN }}"
