@@ -1,22 +1,29 @@
-name: deploy-arc.yml
+name: Release Charts
+
 on:
   push:
-    tags:
-      - "*"
-
-permissions:
-  contents: write
+    branches:
+      - main
 
 jobs:
-  deploy:
+  release:
+    # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
+    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+    permissions:
+      contents: write
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v6
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
-          skip_packaging: true
-          charts_dir: ./deployment
-          pages_branch: main
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
         env:
-          CR_TOKEN: "${{ secrets.GHA_TOKEN }}"
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
